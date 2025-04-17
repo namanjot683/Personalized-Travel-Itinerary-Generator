@@ -1,0 +1,1611 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WanderAI - Personalized Travel Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --primary-dark: #1e40af;
+            --secondary: #6b7280;
+            --accent: #f59e0b;
+            --accent-light: #fbbf24;
+            --accent-dark: #d97706;
+            --light: #f9fafb;
+            --dark: #1f2937;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --gray-100: #f9fafb;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --font-main: 'Inter', sans-serif;
+            --font-heading: 'Poppins', sans-serif;
+            --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 30px;
+        }
+
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: var(--font-main); 
+            background: linear-gradient(to bottom, var(--gray-100), var(--light)); 
+            color: var(--gray-800); 
+            line-height: 1.7; 
+            font-size: 16px;
+        }
+        h1, h2, h3, h4, h5, h6 { 
+            font-family: var(--font-heading); 
+            font-weight: 700; 
+            color: var(--gray-900);
+        }
+
+        /* Scrollbar styles */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--gray-200); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(30, 64, 175, 0.95)), url('/api/placeholder/1200/600');
+            background-size: cover; 
+            background-position: center; 
+            color: white; 
+            padding: 8rem 0; 
+            position: relative; 
+            overflow: hidden;
+        }
+        .hero-section::before {
+            content: ""; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M50 50c0-5.52-4.48-10-10-10s-10 4.48-10 10 4.48 10 10 10 10-4.48 10-10zm-30-30c0-5.52-4.48-10-10-10S0 14.48 0 20s4.48 10 10 10 10-4.48 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .floating-item { 
+            position: absolute; 
+            pointer-events: none; 
+            animation: float 7s ease-in-out infinite; 
+            opacity: 0.3; 
+            color: var(--accent-light);
+        }
+        .floating-item:nth-child(1) { top: 15%; left: 5%; animation-duration: 9s; }
+        .floating-item:nth-child(2) { top: 50%; right: 10%; animation-duration: 11s; animation-delay: 1.5s; }
+        .floating-item:nth-child(3) { bottom: 15%; left: 25%; animation-duration: 13s; animation-delay: 3s; }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(8deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        .hero-tagline { 
+            font-size: 1.4rem; 
+            margin-bottom: 2.5rem; 
+            opacity: 0.95; 
+            font-weight: 300;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: white; 
+            border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-lg); 
+            padding: 3rem; 
+            margin-bottom: 4rem; 
+            position: relative; 
+            z-index: 2; 
+            transition: var(--transition);
+        }
+        .form-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); 
+        }
+        .form-label { 
+            font-weight: 600; 
+            margin-bottom: 0.75rem; 
+            color: var(--gray-700); 
+        }
+        .form-control { 
+            border-radius: var(--radius-md); 
+            padding: 0.75rem 1.25rem; 
+            border: 1px solid var(--gray-300);
+        }
+        .form-control:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.2); 
+        }
+        .form-control:invalid { 
+            border-color: var(--danger); 
+        }
+
+        /* Buttons */
+        .btn-primary, .btn-outline-primary { 
+            border-radius: var(--radius-md); 
+            padding: 0.75rem 2rem; 
+            font-weight: 600; 
+            transition: var(--transition); 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+        }
+        .btn-primary { 
+            background: linear-gradient(90deg, var(--primary), var(--primary-light)); 
+            border: none; 
+        }
+        .btn-primary:hover, .btn-primary:focus { 
+            background: var(--primary-dark); 
+            transform: translateY(-3px); 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); 
+        }
+        .btn-outline-primary { 
+            color: var(--primary); 
+            border-color: var(--primary); 
+        }
+        .btn-outline-primary:hover, .btn-outline-primary:focus { 
+            background: var(--primary); 
+            color: white; 
+            transform: translateY(-3px); 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); 
+        }
+        .btn-lg { 
+            font-size: 1.2rem; 
+            padding: 1rem 2.5rem; 
+        }
+
+        /* Interests and Travel Styles */
+        .interests-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 0.75rem; 
+        }
+        .interest-tag { 
+            padding: 0.6rem 1.2rem; 
+            background-color: var(--gray-100); 
+            border-radius: var(--radius-xl); 
+            cursor: pointer; 
+            transition: var(--transition); 
+            border: 1px solid var(--gray-300); 
+            font-size: 0.95rem; 
+        }
+        .interest-tag:hover { 
+            background-color: var(--primary-light); 
+            border-color: var(--primary); 
+            color: white; 
+        }
+        .interest-tag.active { 
+            background: var(--primary); 
+            color: white; 
+            border-color: var(--primary); 
+            transform: scale(1.05); 
+        }
+
+        .travel-styles-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            gap: 1.25rem; 
+        }
+        .travel-style-btn { 
+            background: white; 
+            border: 2px solid var(--gray-200); 
+            border-radius: var(--radius-md); 
+            padding: 1.5rem; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: var(--transition); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            box-shadow: var(--shadow-sm);
+        }
+        .travel-style-btn:hover { 
+            border-color: var(--primary); 
+            background: var(--gray-100); 
+            transform: translateY(-5px); 
+        }
+        .travel-style-btn.active { 
+            border-color: var(--primary); 
+            background: linear-gradient(rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05)); 
+            box-shadow: var(--shadow-md); 
+            transform: translateY(-5px); 
+        }
+        .travel-style-btn i { 
+            font-size: 2.5rem; 
+            margin-bottom: 1rem; 
+            color: var(--primary); 
+            transition: var(--transition); 
+        }
+        .travel-style-btn.active i { 
+            transform: scale(1.15); 
+            color: var(--primary-dark); 
+        }
+        .travel-style-btn div { 
+            font-weight: 600; 
+            color: var(--gray-800); 
+        }
+
+        /* Budget Slider */
+        .budget-control { 
+            margin-bottom: 2rem; 
+        }
+        .budget-meter { 
+            height: 10px; 
+            background-color: var(--gray-200); 
+            border-radius: var(--radius-xl); 
+            margin: 1rem 0; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        .budget-progress { 
+            height: 100%; 
+            border-radius: var(--radius-xl); 
+            background: linear-gradient(90deg, var(--primary), var(--accent)); 
+            transition: width 0.4s ease; 
+        }
+        .range-labels { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-top: 0.5rem; 
+        }
+        .range-label { 
+            font-size: 0.9rem; 
+            color: var(--gray-600); 
+            font-weight: 500; 
+        }
+        .form-range { 
+            appearance: none; 
+            width: 100%; 
+            height: 6px; 
+            border-radius: 6px; 
+            background: var(--gray-300); 
+            outline: none; 
+            cursor: pointer; 
+        }
+        .form-range::-webkit-slider-thumb { 
+            appearance: none; 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            background: var(--primary); 
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2); 
+            cursor: pointer; 
+            transition: var(--transition); 
+        }
+        .form-range::-webkit-slider-thumb:hover { 
+            transform: scale(1.15); 
+            background: var(--primary-dark); 
+        }
+
+        /* Loading Section */
+        .loading-container { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 5rem 0; 
+        }
+        .loader { 
+            width: 100px; 
+            height: 100px; 
+            position: relative; 
+            margin-bottom: 2.5rem; 
+        }
+        .loader:before {
+            content: ""; 
+            width: 100px; 
+            height: 100px; 
+            border-radius: 50%; 
+            border: 5px solid var(--primary-light); 
+            border-top-color: var(--primary); 
+            animation: spin 1.2s linear infinite; 
+            position: absolute; 
+            top: 0; 
+            left: 0;
+        }
+        .loader:after {
+            content: ""; 
+            width: 75px; 
+            height: 75px; 
+            border-radius: 50%; 
+            border: 5px solid var(--accent-light); 
+            border-top-color: var(--accent); 
+            animation: spin 0.8s linear infinite reverse; 
+            position: absolute; 
+            top: 12.5px; 
+            left: 12.5px;
+        }
+        @keyframes spin { 
+            100% { transform: rotate(360deg); } 
+        }
+        .loading-message { 
+            font-weight: 500; 
+            color: var(--gray-700); 
+            text-align: center; 
+            max-width: 80%; 
+            margin: 0 auto; 
+            font-size: 1.1rem;
+        }
+        .loading-progress { 
+            width: 100%; 
+            max-width: 350px; 
+            height: 8px; 
+            background-color: var(--gray-200); 
+            border-radius: var(--radius-xl); 
+            margin: 2rem auto; 
+            overflow: hidden; 
+        }
+        .loading-bar { 
+            height: 100%; 
+            width: 0; 
+            background: linear-gradient(90deg, var(--primary), var(--accent)); 
+            border-radius: var(--radius-xl); 
+            animation: progress 15s ease-in-out forwards; 
+        }
+        @keyframes progress { 
+            0% { width: 0; } 
+            50% { width: 60%; } 
+            100% { width: 100%; } 
+        }
+        .loading-steps { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            width: 100%; 
+            max-width: 600px; 
+            margin: 0 auto; 
+        }
+        .loading-step { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            position: relative; 
+            flex: 1; 
+        }
+        .step-circle { 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 50%; 
+            background-color: var(--gray-100); 
+            border: 3px solid var(--primary-light); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--primary); 
+            margin-bottom: 0.75rem; 
+            font-weight: 600; 
+            transition: all 0.5s ease; 
+        }
+        .step-label { 
+            font-size: 0.9rem; 
+            text-align: center; 
+            color: var(--gray-600); 
+            font-weight: 500; 
+            transition: all 0.5s ease; 
+        }
+        .loading-step.active .step-circle { 
+            background: var(--primary); 
+            color: white; 
+            transform: scale(1.15); 
+            border-color: var(--primary-dark); 
+        }
+        .loading-step.active .step-label { 
+            color: var(--primary); 
+            font-weight: 600; 
+        }
+
+        /* Itinerary Card */
+        .itinerary-card { 
+            background: white; 
+            border-radius: var(--radius-md); 
+            box-shadow: var(--shadow-md); 
+            margin-bottom: 2.5rem; 
+            overflow: hidden; 
+            transition: var(--transition); 
+            border: 1px solid var(--gray-200); 
+        }
+        .itinerary-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: var(--shadow-lg); 
+        }
+        .day-header { 
+            background: linear-gradient(90deg, var(--primary), var(--primary-light)); 
+            color: white; 
+            padding: 1.25rem 2rem; 
+            font-weight: 600; 
+            font-size: 1.3rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .day-date { 
+            font-size: 1rem; 
+            opacity: 0.85; 
+        }
+        .activity-item { 
+            padding: 2rem; 
+            border-bottom: 1px solid var(--gray-200); 
+            transition: var(--transition); 
+        }
+        .activity-item:hover { 
+            background-color: var(--gray-100); 
+        }
+        .activity-item:last-child { 
+            border-bottom: none; 
+        }
+        .activity-time { 
+            display: inline-block; 
+            background: var(--primary-light); 
+            color: white; 
+            padding: 0.4rem 1rem; 
+            border-radius: var(--radius-md); 
+            font-weight: 600; 
+            font-size: 0.95rem; 
+            margin-right: 1.25rem; 
+        }
+        .activity-cost { 
+            background: var(--accent); 
+            color: white; 
+            font-size: 0.85rem; 
+            padding: 0.4rem 1rem; 
+            border-radius: var(--radius-xl); 
+        }
+        .activity-meta { 
+            display: flex; 
+            align-items: center; 
+            gap: 1.5rem; 
+            margin-top: 1.25rem; 
+            color: var(--gray-600); 
+            font-size: 0.95rem; 
+        }
+        .meta-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+        }
+        .accommodation-card { 
+            background: linear-gradient(rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.02)); 
+            border-top: 1px dashed var(--gray-300); 
+        }
+        .accommodation-icon { 
+            color: var(--primary); 
+            font-size: 1.75rem; 
+            margin-right: 1.25rem; 
+        }
+
+        /* Summary Card */
+        .summary-card { 
+            background: white; 
+            border-radius: var(--radius-md); 
+            box-shadow: var(--shadow-md); 
+            margin-bottom: 2.5rem; 
+            overflow: hidden; 
+            transition: var(--transition); 
+            border: 1px solid var(--gray-200); 
+        }
+        .summary-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: var(--shadow-lg); 
+        }
+        .card-header { 
+            background: linear-gradient(90deg, var(--primary), var(--primary-light)); 
+            color: white; 
+            padding: 1.25rem 2rem; 
+            font-weight: 600; 
+        }
+        .card-body { 
+            padding: 2rem; 
+        }
+        .budget-chart { 
+            margin: 2rem 0; 
+        }
+        .budget-category { 
+            margin-bottom: 1.25rem; 
+        }
+        .budget-bar { 
+            height: 14px; 
+            background-color: var(--gray-200); 
+            border-radius: var(--radius-xl); 
+            overflow: hidden; 
+            margin-top: 0.75rem; 
+        }
+        .budget-fill { 
+            height: 100%; 
+            border-radius: var(--radius-xl); 
+        }
+        .activities-fill { background: var(--success); }
+        .food-fill { background: var(--info); }
+        .accommodation-fill { background: var(--warning); }
+        .transport-fill { background: var(--accent); }
+        .misc-fill { background: var(--gray-500); }
+
+        /* Weather Forecast */
+        .weather-days { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-top: 1.5rem; 
+            gap: 1rem; 
+        }
+        .weather-day { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+            flex: 1; 
+        }
+        .weather-icon { 
+            font-size: 2rem; 
+            margin: 0.75rem 0; 
+            color: var(--primary); 
+        }
+        .weather-temp { 
+            font-weight: 600; 
+        }
+
+        /* Map Container */
+        .map-container { 
+            height: 350px; 
+            border-radius: var(--radius-md); 
+            overflow: hidden; 
+            background: var(--gray-200); 
+            position: relative; 
+        }
+        .map-placeholder { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: rgba(0, 0, 0, 0.5); 
+            color: white; 
+            font-size: 1.2rem; 
+            font-weight: 600; 
+        }
+
+        /* Footer */
+        footer { 
+            background: var(--gray-900); 
+            color: white; 
+            padding: 4rem 0 2rem; 
+        }
+        .footer-brand { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            margin-bottom: 1.5rem; 
+        }
+        .footer-description { 
+            opacity: 0.9; 
+            margin-bottom: 2.5rem; 
+            font-size: 1rem; 
+        }
+        .footer-heading { 
+            font-size: 1.3rem; 
+            margin-bottom: 1.5rem; 
+            position: relative; 
+            padding-bottom: 1rem; 
+        }
+        .footer-heading::after { 
+            content: ""; 
+            position: absolute; 
+            left: 0; 
+            bottom: 0; 
+            width: 60px; 
+            height: 4px; 
+            background: var(--accent); 
+        }
+        .footer-links { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0; 
+        }
+        .footer-links li { 
+            margin-bottom: 1rem; 
+        }
+        .footer-links a { 
+            color: rgba(255, 255, 255, 0.85); 
+            text-decoration: none; 
+            transition: var(--transition); 
+        }
+        .footer-links a:hover { 
+            color: var(--accent); 
+            padding-left: 8px; 
+        }
+        .social-links { 
+            display: flex; 
+            gap: 1.5rem; 
+            margin-top: 2rem; 
+        }
+        .social-icon { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 45px; 
+            height: 45px; 
+            background: rgba(255, 255, 255, 0.15); 
+            border-radius: 50%; 
+            color: white; 
+            transition: var(--transition); 
+        }
+        .social-icon:hover { 
+            background: var(--accent); 
+            transform: translateY(-5px); 
+        }
+        .copyright { 
+            text-align: center; 
+            border-top: 1px solid rgba(255, 255, 255, 0.15); 
+            padding-top: 2rem; 
+            margin-top: 4rem; 
+            color: rgba(255, 255, 255, 0.7); 
+            font-size: 0.95rem; 
+        }
+
+        /* AI Chat Widget */
+        .ai-chat-widget { 
+            position: fixed; 
+            bottom: 40px; 
+            right: 40px; 
+            z-index: 1000; 
+        }
+        .chat-toggle { 
+            width: 70px; 
+            height: 70px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.75rem; 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); 
+            cursor: pointer; 
+            transition: var(--transition); 
+        }
+        .chat-toggle:hover { 
+            transform: scale(1.15); 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); 
+        }
+        .chat-widget { 
+            position: absolute; 
+            bottom: 90px; 
+            right: 0; 
+            width: 400px; 
+            height: 500px; 
+            background: white; 
+            border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-lg); 
+            overflow: hidden; 
+            display: none; 
+            flex-direction: column; 
+            transition: all 0.3s ease-in-out; 
+        }
+        .chat-header { 
+            background: linear-gradient(90deg, var(--primary), var(--primary-light)); 
+            color: white; 
+            padding: 1.25rem; 
+            display: flex; 
+            align-items: center; 
+        }
+        .chat-avatar { 
+            width: 45px; 
+            height: 45px; 
+            border-radius: 50%; 
+            background: rgba(255, 255, 255, 0.25); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-right: 1rem; 
+        }
+        .chat-title { 
+            font-weight: 600; 
+            margin-bottom: 0; 
+        }
+        .chat-close { 
+            margin-left: auto; 
+            background: none; 
+            border: none; 
+            color: white; 
+            font-size: 1.3rem; 
+            cursor: pointer; 
+            opacity: 0.85; 
+            transition: var(--transition); 
+        }
+        .chat-close:hover { 
+            opacity: 1; 
+            transform: rotate(90deg); 
+        }
+        .chat-messages { 
+            flex: 1; 
+            padding: 1.5rem; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 1.25rem; 
+            background: var(--gray-100); 
+        }
+        .message { 
+            max-width: 85%; 
+            padding: 1rem 1.5rem; 
+            border-radius: var(--radius-md); 
+            font-size: 0.95rem; 
+            line-height: 1.5; 
+        }
+        .message-ai { 
+            background: white; 
+            align-self: flex-start; 
+            border-bottom-left-radius: 0; 
+            box-shadow: var(--shadow-sm); 
+        }
+        .message-user { 
+            background: var(--primary); 
+            color: white; 
+            align-self: flex-end; 
+            border-bottom-right-radius: 0; 
+        }
+        .chat-input { 
+            padding: 1rem; 
+            border-top: 1px solid var(--gray-200); 
+            display: flex; 
+            align-items: center; 
+            background: white; 
+        }
+        .chat-input input { 
+            flex: 1; 
+            border: 1px solid var(--gray-300); 
+            border-radius: var(--radius-md); 
+            padding: 0.75rem 1.25rem; 
+            margin-right: 0.75rem; 
+            font-size: 0.95rem; 
+        }
+        .chat-input button { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: var(--radius-md); 
+            padding: 0.75rem; 
+            cursor: pointer; 
+            transition: var(--transition); 
+        }
+        .chat-input button:hover { 
+            background: var(--primary-dark); 
+            transform: scale(1.1); 
+        }
+
+        /* Toast Notifications */
+        .toast-container { 
+            position: fixed; 
+            top: 30px; 
+            right: 30px; 
+            z-index: 2000; 
+        }
+        .toast { 
+            background: white; 
+            border-radius: var(--radius-md); 
+            box-shadow: var(--shadow-lg); 
+            padding: 1.25rem; 
+            margin-bottom: 1.25rem; 
+            display: flex; 
+            align-items: center; 
+            animation: slideIn 0.4s ease-out forwards; 
+            max-width: 400px; 
+            border-left: 5px solid var(--primary); 
+        }
+        @keyframes slideIn { 
+            from { transform: translateX(100%); opacity: 0; } 
+            to { transform: translateX(0); opacity: 1; } 
+        }
+        @keyframes slideOut { 
+            from { transform: translateX(0); opacity: 1; } 
+            to { transform: translateX(100%); opacity: 0; } 
+        }
+        .toast-icon { 
+            font-size: 1.5rem; 
+            margin-right: 1.25rem; 
+        }
+        .toast-success { border-left-color: var(--success); }
+        .toast-success .toast-icon { color: var(--success); }
+        .toast-warning { border-left-color: var(--warning); }
+        .toast-warning .toast-icon { color: var(--warning); }
+        .toast-error { border-left-color: var(--danger); }
+        .toast-error .toast-icon { color: var(--danger); }
+        .toast-info { border-left-color: var(--info); }
+        .toast-info .toast-icon { color: var(--info); }
+        .toast-content { flex: 1; }
+        .toast-title { font-weight: 600; margin-bottom: 0.3rem; }
+        .toast-message { font-size: 0.95rem; color: var(--gray-600); }
+        .toast-close { 
+            background: none; 
+            border: none; 
+            color: var(--gray-500); 
+            cursor: pointer; 
+            font-size: 1.1rem; 
+            transition: var(--transition); 
+        }
+        .toast-close:hover { 
+            color: var(--gray-800); 
+            transform: scale(1.2); 
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .form-card { padding: 2.5rem; }
+            .travel-styles-container { grid-template-columns: repeat(3, 1fr); }
+            .loading-step { font-size: 0.9rem; }
+        }
+        @media (max-width: 768px) {
+            .hero-section { padding: 6rem 0; }
+            .hero-title { font-size: 2.5rem; }
+            .travel-styles-container { grid-template-columns: repeat(2, 1fr); }
+            .step-circle { width: 40px; height: 40px; font-size: 0.9rem; }
+            .loading-step .step-label { font-size: 0.8rem; }
+            .chat-widget { width: 350px; right: -20px; }
+        }
+        @media (max-width: 576px) {
+            .form-card { padding: 2rem; margin-bottom: 3rem; }
+            .hero-section { padding: 5rem 0; }
+            .hero-title { font-size: 2rem; margin-bottom: 1.25rem; }
+            .hero-tagline { font-size: 1.1rem; margin-bottom: 2rem; }
+            .travel-styles-container { gap: 0.75rem; }
+            .travel-style-btn { padding: 1rem; }
+            .travel-style-btn i { font-size: 2rem; margin-bottom: 0.75rem; }
+            .travel-style-btn div { font-size: 0.9rem; }
+            .loading-steps { display: none; }
+            .day-header { padding: 1rem 1.5rem; font-size: 1.1rem; }
+            .activity-item { padding: 1.5rem; }
+            .chat-widget { width: calc(100% - 80px); height: 450px; right: -20px; }
+            .ai-chat-widget { bottom: 20px; right: 20px; }
+            .toast-container { top: 20px; right: 20px; }
+        }
+
+        /* Print Styles */
+        @media print {
+            .form-section, .features-section, .ai-chat-widget, .btn-primary, .btn-outline-primary, footer { display: none !important; }
+            .hero-section { 
+                background: none !important; 
+                color: var(--gray-900) !important; 
+                padding: 1.5rem 0 !important; 
+                margin-bottom: 1.5rem !important; 
+            }
+            .hero-content { text-align: center; }
+            .floating-item { display: none; }
+            .summary-card, .itinerary-card { 
+                break-inside: avoid; 
+                page-break-inside: avoid; 
+                box-shadow: none !important; 
+                border: 1px solid var(--gray-300) !important; 
+            }
+            .day-header, .card-header { 
+                background: var(--gray-200) !important; 
+                color: var(--gray-900) !important; 
+            }
+            .budget-fill { border: 1px solid var(--gray-300) !important; }
+            .activity-time, .activity-cost { background: var(--gray-200) !important; color: var(--gray-900) !important; }
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 1.2s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .slide-up { animation: slideUp 1s ease forwards; }
+        @keyframes slideUp { 
+            from { transform: translateY(40px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section" aria-label="WanderAI Hero Section">
+        <div class="floating-item"><i class="fas fa-plane fa-4x"></i></div>
+        <div class="floating-item"><i class="fas fa-map-marker-alt fa-4x"></i></div>
+        <div class="floating-item"><i class="fas fa-compass fa-4x"></i></div>
+        <div class="container hero-content animate__animated animate__fadeIn">
+            <div class="row justify-content-center text-center">
+                <div class="col-lg-8">
+                    <h1 class="display-3 mb-4 hero-title">WanderAI</h1>
+                    <p class="hero-tagline">Craft Your Dream Journey with AI-Powered Precision</p>
+                    <button class="btn btn-primary btn-lg mb-4" onclick="document.getElementById('planner').scrollIntoView({behavior: 'smooth'})" aria-label="Start Planning Your Trip">Start Planning Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Form Section -->
+    <section class="form-section mb-5" id="planner" aria-label="Trip Planner Form">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="form-card animate__animated animate__slideUp">
+                        <h2 class="text-center mb-5">Design Your Perfect Adventure</h2>
+                        <form id="trip-planner-form" novalidate>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="destination" class="form-label">Where are you headed?</label>
+                                    <input type="text" class="form-control" id="destination" placeholder="City, Country or Region" required aria-required="true">
+                                    <div class="invalid-feedback">Please enter a destination.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="trip-dates" class="form-label">Travel dates</label>
+                                    <input type="text" class="form-control" id="trip-dates" placeholder="Select date range" required aria-required="true">
+                                    <div class="invalid-feedback">Please select travel dates.</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="travelers" class="form-label">Number of travelers</label>
+                                    <input type="number" class="form-control" id="travelers" min="1" value="2" required aria-required="true">
+                                    <div class="invalid-feedback">Please select at least one traveler.</div>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label">Budget preference</label>
+                                    <div class="budget-control">
+                                        <input type="range" class="form-range" min="1" max="5" step="1" value="3" id="budget-slider" aria-label="Budget Level">
+                                        <div class="budget-meter">
+                                            <div class="budget-progress" style="width: 60%;"></div>
+                                        </div>
+                                        <div class="range-labels">
+                                            <span class="range-label">Budget</span>
+                                            <span class="range-label">Mid-range</span>
+                                            <span class="range-label">Luxury</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Your travel vibe</label>
+                                    <div class="travel-styles-container" role="group" aria-label="Travel Style Selection">
+                                        <div class="travel-style-btn" role="button" tabindex="0" aria-label="Adventure Travel Style"><i class="fas fa-hiking"></i><div>Adventure</div></div>
+                                        <div class="travel-style-btn" role="button" tabindex="0" aria-label="Cultural Travel Style"><i class="fas fa-landmark"></i><div>Cultural</div></div>
+                                        <div class="travel-style-btn" role="button" tabindex="0" aria-label="Foodie Travel Style"><i class="fas fa-utensils"></i><div>Foodie</div></div>
+                                        <div class="travel-style-btn" role="button" tabindex="0" aria-label="Relaxation Travel Style"><i class="fas fa-umbrella-beach"></i><div>Relaxation</div></div>
+                                        <div class="travel-style-btn" role="button" tabindex="0" aria-label="Shopping Travel Style"><i class="fas fa-shopping-bag"></i><div>Shopping</div></div>
+                                        <div class="travel-style-btn" role="button" tabindex="0" aria-label="Family Travel Style"><i class="fas fa-users"></i><div>Family</div></div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Your interests (Select all that apply)</label>
+                                    <div class="interests-container" role="group" aria-label="Interest Selection">
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Museums Interest">Museums</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Local Markets Interest">Local Markets</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Hiking Interest">Hiking</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Street Food Interest">Street Food</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Fine Dining Interest">Fine Dining</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Historical Sites Interest">Historical Sites</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Art Galleries Interest">Art Galleries</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Live Music Interest">Live Music</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Wildlife Interest">Wildlife</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Photography Interest">Photography</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Beaches Interest">Beaches</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Architecture Interest">Architecture</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Local Tours Interest">Local Tours</span>
+                                        <span class="interest-tag" role="button" tabindex="0" aria-label="Nightlife Interest">Nightlife</span>
+                                    </div>
+                                </div>
+                                <div class="col-12 d-flex justify-content-center mt-5">
+                                    <button type="submit" class="btn btn-primary btn-lg" aria-label="Generate Trip Itinerary">Create My Itinerary</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Section -->
+    <section class="loading-section py-5" id="loading" style="display: none;" aria-label="Loading Itinerary">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="form-card loading-container animate__animated animate__fadeIn">
+                        <div class="loader" aria-label="Loading Animation"></div>
+                        <h3 class="mb-4">Crafting Your Dream Trip</h3>
+                        <p class="loading-message">Our AI is curating a personalized itinerary tailored to your preferences, analyzing countless options to ensure perfection...</p>
+                        <div class="loading-progress">
+                            <div class="loading-bar"></div>
+                        </div>
+                        <div class="loading-steps" aria-label="Loading Steps">
+                            <div class="loading-step active"><div class="step-circle">1</div><div class="step-label">Analyzing Preferences</div></div>
+                            <div class="loading-step"><div class="step-circle">2</div><div class="step-label">Curating Activities</div></div>
+                            <div class="loading-step"><div class="step-circle">3</div><div class="step-label">Optimizing Routes</div></div>
+                            <div class="loading-step"><div class="step-circle">4</div><div class="step-label">Finalizing Itinerary</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results-section py-5" id="results" style="display: none;" aria-label="Trip Itinerary Results"></section>
+
+    <!-- AI Chat Widget -->
+    <div class="ai-chat-widget" aria-label="AI Travel Assistant Chat">
+        <button class="chat-toggle animate__animated animate__pulse animate__infinite" aria-label="Toggle Chat Assistant"><i class="fas fa-comment-alt"></i></button>
+        <div class="chat-widget" role="dialog" aria-labelledby="chat-title">
+            <div class="chat-header">
+                <div class="chat-avatar"><i class="fas fa-robot"></i></div>
+                <h5 class="chat-title" id="chat-title">WanderAI Assistant</h5>
+                <button class="chat-close" aria-label="Close Chat"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-messages" id="chat-messages" aria-live="polite">
+                <div class="message message-ai">Welcome! I'm WanderAI, your travel companion. How can I assist you with your trip planning today?</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Ask me anything about your trip..." aria-label="Chat Input">
+                <button id="chat-send" aria-label="Send Message"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" aria-live="polite"></div>
+
+    <!-- Footer -->
+    <footer aria-label="Footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-5 mb-lg-0">
+                    <div class="footer-brand">WanderAI</div>
+                    <p class="footer-description">Your ultimate AI-powered travel planner, creating bespoke itineraries tailored to your dreams, budget, and style.</p>
+                    <div class="social-links" aria-label="Social Media Links">
+                        <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2 mb-4 mb-lg-0">
+                    <h5 class="footer-heading">Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-2 mb-4 mb-lg-0">
+                    <h5 class="footer-heading">Features</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Trip Planner</a></li>
+                        <li><a href="#">Budget Calculator</a></li>
+                        <li><a href="#">AI Travel Assistant</a></li>
+                        <li><a href="#">City Guides</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-2 mb-4 mb-lg-0">
+                    <h5 class="footer-heading">Support</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Feedback</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h5 class="footer-heading">Legal</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">© 2025 WanderAI. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    <script>
+        // Utility Functions
+        function createUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function showToast(type, title, message) {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastId = createUUID();
+            const toastHTML = `
+                <div class="toast toast-${type}" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-icon"><i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i></div>
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                    <button class="toast-close" aria-label="Close Notification"><i class="fas fa-times"></i></button>
+                </div>
+            `;
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            const toast = document.getElementById(toastId);
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.style.animation = 'slideOut 0.4s ease forwards';
+                setTimeout(() => toast.remove(), 400);
+            });
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.4s ease forwards';
+                setTimeout(() => toast.remove(), 400);
+            }, 5000);
+        }
+
+        // Debounce Utility
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Initialize date picker
+        flatpickr("#trip-dates", {
+            mode: "range",
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            showMonths: 2,
+            onChange: function(selectedDates) {
+                if (selectedDates.length === 2) {
+                    const [start, end] = selectedDates;
+                    if (end - start > 30 * 24 * 60 * 60 * 1000) {
+                        showToast('warning', 'Date Range', 'Please select a trip duration of 30 days or less.');
+                        this.clear();
+                    }
+                }
+            }
+        });
+
+        // Budget slider
+        const budgetSlider = document.getElementById('budget-slider');
+        const budgetProgress = document.querySelector('.budget-progress');
+        budgetSlider.addEventListener('input', debounce(function() {
+            const value = (this.value - this.min) / (this.max - this.min) * 100;
+            budgetProgress.style.width = value + '%';
+        }, 50));
+
+        // Travel style selection
+        const travelStyleBtns = document.querySelectorAll('.travel-style-btn');
+        travelStyleBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.classList.contains('active')) {
+                    this.classList.remove('active');
+                } else {
+                    travelStyleBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    this.setAttribute('aria-pressed', 'true');
+                }
+            });
+            btn.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    btn.click();
+                }
+            });
+        });
+
+        // Interest tags selection
+        const interestTags = document.querySelectorAll('.interest-tag');
+        interestTags.forEach(tag => {
+            tag.addEventListener('click', function() {
+                const activeTags = document.querySelectorAll('.interest-tag.active').length;
+                if (!this.classList.contains('active') && activeTags >= 8) {
+                    showToast('warning', 'Selection Limit', 'You can select up to 8 interests.');
+                    return;
+                }
+                this.classList.toggle('active');
+                this.setAttribute('aria-pressed', this.classList.contains('active'));
+            });
+            tag.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    tag.click();
+                }
+            });
+        });
+
+        // Chat widget toggle
+        const chatToggle = document.querySelector('.chat-toggle');
+        const chatWidget = document.querySelector('.chat-widget');
+        const chatClose = document.querySelector('.chat-close');
+        chatToggle.addEventListener('click', function() {
+            const isOpen = chatWidget.style.display === 'flex';
+            chatWidget.style.display = isOpen ? 'none' : 'flex';
+            chatToggle.setAttribute('aria-expanded', !isOpen);
+            if (!isOpen) {
+                chatWidget.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                document.getElementById('chat-input').focus();
+            }
+        });
+        chatClose.addEventListener('click', function() {
+            chatWidget.style.display = 'none';
+            chatToggle.setAttribute('aria-expanded', 'false');
+            chatToggle.focus();
+        });
+
+        // AI Travel Assistant
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+
+        async function simulateAIResponse(message, context = {}) {
+            const responses = {
+                'destination': `I can suggest some amazing destinations! What vibe are you looking for—city adventures, beach relaxation, or cultural immersion? For example, ${context.destination ? `based on your interest in ${context.destination}, I can recommend nearby attractions` : 'try Paris for culture or Bali for beaches'}.`,
+                'budget': `Let’s work with your budget. Are you aiming for budget-friendly, mid-range, or luxury travel? ${context.budget ? `Your ${['Ultra Budget', 'Budget', 'Mid-range', 'Premium', 'Luxury'][context.budget - 1]} preference suggests options like ${context.budget <= 2 ? 'hostels or local eateries' : 'boutique hotels or fine dining'}` : 'I can tailor suggestions accordingly.'}`,
+                'activities': `What activities do you love? Hiking, museum visits, food tours, or a mix? ${context.interests?.length ? `Based on your interests in ${context.interests.join(', ')}, I can suggest tailored activities like ${context.interests.includes('Museums') ? 'museum tours' : 'outdoor adventures'}` : 'Share your interests for personalized options.'}`,
+                'help': 'I’m here to assist! You can ask about destinations, itineraries, budgets, or specific activities. What’s on your mind?',
+                'customize': `Let’s tweak your itinerary for ${context.destination || 'your trip'}. Want to add specific activities, adjust the budget, or change the travel style?`,
+                'default': `That’s a great question! Can you clarify a bit more? I can help with destinations, activities, budgets, or anything travel-related. ${context.destination ? `Since you’re planning for ${context.destination}, maybe I can suggest some local gems?` : ''}`
+            };
+
+            const messageLower = message.toLowerCase();
+            let responseKey = 'default';
+            if (messageLower.includes('destination') || messageLower.includes('where')) {
+                responseKey = 'destination';
+            } else if (messageLower.includes('budget') || messageLower.includes('cost')) {
+                responseKey = 'budget';
+            } else if (messageLower.includes('activities') || messageLower.includes('things to do')) {
+                responseKey = 'activities';
+            } else if (messageLower.includes('help') || messageLower.includes('assist')) {
+                responseKey = 'help';
+            } else if (messageLower.includes('customize') || messageLower.includes('change')) {
+                responseKey = 'customize';
+            }
+
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+            
+            return responses[responseKey];
+        }
+
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'message-user' : 'message-ai'}`;
+            messageDiv.textContent = content;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatSend.addEventListener('click', async () => {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            chatInput.value = '';
+
+            try {
+                const context = {
+                    destination: document.getElementById('destination').value.trim(),
+                    budget: parseInt(document.getElementById('budget-slider').value),
+                    interests: Array.from(document.querySelectorAll('.interest-tag.active')).map(tag => tag.textContent)
+                };
+                const response = await simulateAIResponse(message, context);
+                addMessage(response);
+            } catch (error) {
+                showToast('error', 'Assistant Error', 'Oops, something went wrong with the AI assistant. Please try again.');
+                console.error('AI Assistant Error:', error);
+            }
+        });
+
+        chatInput.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                chatSend.click();
+            }
+        });
+
+        // Form submission and travel plan generation
+        const tripPlannerForm = document.getElementById('trip-planner-form');
+        const formSection = document.querySelector('.form-section');
+        const loadingSection = document.querySelector('.loading-section');
+        const resultsSection = document.querySelector('.results-section');
+
+        tripPlannerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                showToast('error', 'Form Error', 'Please fill out all required fields correctly.');
+                return;
+            }
+
+            // Get form values
+            const destination = document.getElementById('destination').value.trim();
+            const dates = document.getElementById('trip-dates').value;
+            const travelers = parseInt(document.getElementById('travelers').value);
+            const budget = parseInt(document.getElementById('budget-slider').value);
+
+            // Get selected travel style
+            let travelStyle = '';
+            document.querySelectorAll('.travel-style-btn.active').forEach(btn => {
+                travelStyle = btn.querySelector('div').textContent;
+            });
+
+            // Get selected interests
+            const interests = [];
+            document.querySelectorAll('.interest-tag.active').forEach(tag => {
+                interests.push(tag.textContent);
+            });
+
+            // Hide form and show loading
+            formSection.style.display = 'none';
+            loadingSection.style.display = 'block';
+
+            // Animate loading steps
+            const loadingSteps = document.querySelectorAll('.loading-step');
+            let currentStep = 0;
+            const stepInterval = setInterval(() => {
+                loadingSteps[currentStep].classList.remove('active');
+                currentStep = (currentStep + 1) % loadingSteps.length;
+                loadingSteps[currentStep].classList.add('active');
+                if (currentStep === loadingSteps.length - 1) {
+                    clearInterval(stepInterval);
+                    setTimeout(() => {
+                        loadingSection.style.display = 'none';
+                        generateTravelPlan(destination, dates, travelers, budget, travelStyle, interests);
+                    }, 1500);
+                }
+            }, 1500);
+        });
+
+        function generateTravelPlan(destination, dates, travelers, budget, travelStyle, interests) {
+            const dateRange = dates.split(' to ');
+            const startDate = new Date(dateRange[0] || new Date());
+            const endDate = dateRange[1] ? new Date(dateRange[1]) : new Date(startDate);
+            endDate.setDate(endDate.getDate() + 3);
+            const days = Math.max(1, Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
+            const budgetText = ['Ultra Budget', 'Budget', 'Mid-range', 'Premium', 'Luxury'][budget - 1];
+
+            let resultsHTML = `
+                <div class="container animate__animated animate__fadeIn">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
+                            <div class="form-card text-center mb-5">
+                                <h2>Your ${days}-Day Adventure in ${destination}</h2>
+                                <p>Travel Style: ${travelStyle || 'Balanced'} | Budget: ${budgetText} | Travelers: ${travelers}</p>
+                                <div class="d-flex justify-content-center gap-3 mt-4">
+                                    <button class="btn btn-primary" onclick="window.print()" aria-label="Download Itinerary as PDF"><i class="fas fa-download me-2"></i> Download Itinerary</button>
+                                    <button class="btn btn-outline-primary" id="customize-plan" aria-label="Customize Itinerary"><i class="fas fa-edit me-2"></i> Customize</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h3 class="mb-4">Daily Itinerary</h3>
+            `;
+
+            const activities = [
+                ['Breakfast at a local café', 'Guided city tour', 'Museum exploration', 'Historic landmark visit', 'Sunrise hiking trail', 'Local market stroll', 'Culinary workshop'],
+                ['Lunch at a top-rated eatery', 'Shopping in boutique district', 'Art gallery tour', 'Park relaxation', 'Beach afternoon', 'Cultural immersion', 'Adventure excursion'],
+                ['Dinner with regional flavors', 'Sunset river cruise', 'Live music event', 'Night city tour', 'Local festival', 'Theater show', 'Street food adventure']
+            ];
+
+            const attractions = {
+                'Paris': ['Eiffel Tower', 'Louvre Museum', 'Notre-Dame Cathedral', 'Montmartre District', 'Champs-Élysées', 'Seine River Cruise', 'Sacré-Cœur Basilica'],
+                'New York': ['Times Square', 'Central Park', 'Statue of Liberty', 'Empire State Building', 'Brooklyn Bridge', 'Broadway Show', 'Metropolitan Museum'],
+                'Tokyo': ['Shibuya Crossing', 'Senso-ji Temple', 'Tokyo Skytree', 'Meiji Shrine', 'Shinjuku Gyoen Garden', 'Akihabara District', 'Tsukiji Market'],
+                'Rome': ['Colosseum', 'Vatican Museums', 'Trevi Fountain', 'Roman Forum', 'Pantheon', 'Spanish Steps', 'Villa Borghese Gardens'],
+                'default': ['City Center', 'Main Plaza', 'Local Museum', 'Cultural Quarter', 'Scenic Park', 'Historic District', 'Iconic Landmark']
+            };
+
+            const destinationLower = destination.toLowerCase();
+            let locationAttractions = attractions.default;
+            Object.keys(attractions).forEach(key => {
+                if (destinationLower.includes(key.toLowerCase())) {
+                    locationAttractions = attractions[key];
+                }
+            });
+
+            for (let day = 0; day < days; day++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(currentDate.getDate() + day);
+                const formattedDate = currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+                resultsHTML += `
+                    <div class="itinerary-card animate__animated animate__slideUp">
+                        <div class="day-header">
+                            <span>Day ${day + 1}</span>
+                            <span class="day-date">${formattedDate}</span>
+                        </div>
+                        <div class="activity-item">
+                            <h5><span class="activity-time">8:00 AM</span> ${activities[0][day % activities[0].length]}</h5>
+                            <p>Kick off your day with a delightful breakfast at a cozy local café, setting the tone for an exciting day ahead.</p>
+                            <div class="activity-meta">
+                                <span class="meta-item"><i class="fas fa-map-marker-alt"></i> Near your stay</span>
+                                <span class="activity-cost">$${(budget * 6) + 5}</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <h5><span class="activity-time">10:00 AM</span> Visit ${locationAttractions[day % locationAttractions.length]}</h5>
+                            <p>Immerse yourself in one of ${destination}'s must-see landmarks, rich with history and culture.</p>
+                            <div class="activity-meta">
+                                <span class="meta-item"><i class="fas fa-clock"></i> 2.5 hours</span>
+                                <span class="meta-item"><i class="fas fa-star"></i> 4.9/5</span>
+                                <span class="activity-cost">$${(budget * 12) + 10}</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <h5><span class="activity-time">1:00 PM</span> ${activities[1][day % activities[1].length]}</h5>
+                            <p>Savor a ${budgetText.toLowerCase()} lunch featuring ${destination}'s signature dishes, followed by local exploration.</p>
+                            <div class="activity-meta">
+                                <span class="meta-item"><i class="fas fa-utensils"></i> Regional cuisine</span>
+                                <span class="meta-item"><i class="fas fa-clock"></i> 3 hours</span>
+                                <span class="activity-cost">$${(budget * 18) + 15}</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <h5><span class="activity-time">4:00 PM</span> Visit ${locationAttractions[(day + 2) % locationAttractions.length]}</h5>
+                            <p>Discover another iconic site, perfectly aligned with your ${travelStyle || 'balanced'} travel preferences.</p>
+                            <div class="activity-meta">
+                                <span class="meta-item"><i class="fas fa-clock"></i> 2 hours</span>
+                                <span class="meta-item"><i class="fas fa-star"></i> 4.7/5</span>
+                                <span class="activity-cost">$${(budget * 15) + 12}</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <h5><span class="activity-time">7:00 PM</span> ${activities[2][day % activities[2].length]}</h5>
+                            <p>End your day with a memorable experience, diving deep into ${destination}'s vibrant culture.</p>
+                            <div class="activity-meta">
+                                <span class="meta-item"><i class="fas fa-clock"></i> 2.5 hours</span>
+                                <span class="activity-cost">$${(budget * 25) + 20}</span>
+                            </div>
+                        </div>
+                        <div class="activity-item accommodation-card">
+                            <h5><i class="fas fa-bed accommodation-icon"></i> Accommodation</h5>
+                            <p>${['Hostel', 'Budget Hotel', 'Mid-range Hotel', 'Boutique Hotel', 'Luxury Resort'][budget - 1]} in the ${['outskirts', 'suburbs', 'city center', 'prime district', 'exclusive area'][budget - 1]} of ${destination}</p>
+                            <div class="activity-meta">
+                                <span class="meta-item"><i class="fas fa-star"></i> ${budget + 2.5}/5</span>
+                                <span class="activity-cost">$${(budget * 60) + 30}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const dailyBudget = (budget * 136) + 92;
+            const totalBudget = dailyBudget * days * travelers;
+
+            // Weather forecast simulation
+            const weatherIcons = ['sun', 'cloud-sun', 'cloud-rain', 'cloud', 'wind'];
+            const weatherConditions = ['Sunny', 'Partly Cloudy', 'Light Rain', 'Cloudy', 'Windy'];
+            let weatherHTML = '';
+            for (let day = 0; day < Math.min(days, 5); day++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(currentDate.getDate() + day);
+                const formattedDate = currentDate.toLocaleDateString('en-US', { weekday: 'short' });
+                const temp = 15 + Math.round(Math.random() * 15);
+                const conditionIndex = Math.floor(Math.random() * weatherConditions.length);
+                weatherHTML += `
+                    <div class="weather-day">
+                        <div>${formattedDate}</div>
+                        <i class="fas fa-${weatherIcons[conditionIndex]} weather-icon"></i>
+                        <div class="weather-temp">${temp}°C</div>
+                        <div>${weatherConditions[conditionIndex]}</div>
+                    </div>
+                `;
+            }
+
+            resultsHTML += `
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="summary-card animate__animated animate__slideUp">
+                            <div class="card-header">
+                                <h5 class="mb-0">Trip Summary</h5>
+                            </div>
+                            <div class="card-body">
+                                <div><strong>Destination:</strong> ${destination}</div>
+                                <div><strong>Dates:</strong> ${dates || 'Flexible'}</div>
+                                <div><strong>Duration:</strong> ${days} days</div>
+                                <div><strong>Travelers:</strong> ${travelers}</div>
+                                <div><strong>Travel Style:</strong> ${travelStyle || 'Balanced'}</div>
+                                <div><strong>Interests:</strong> ${interests.length ? interests.join(', ') : 'None selected'}</div>
+                                <div class="mt-4"><strong>Estimated Total Cost:</strong> $${totalBudget.toLocaleString()}</div>
+                                <div class="text-muted small">($${dailyBudget.toLocaleString()} per day per person)</div>
+                                <div class="budget-chart mt-4">
+                                    <h6>Budget Breakdown</h6>
+                                    <div class="budget-category">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Activities</span>
+                                            <span>${Math.round(40 + budget * 2.5)}%</span>
+                                        </div>
+                                        <div class="budget-bar">
+                                            <div class="budget-fill activities-fill" style="width: ${40 + budget * 2.5}%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="budget-category">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Food & Drinks</span>
+                                            <span>${Math.round(22 + budget * 1.5)}%</span>
+                                        </div>
+                                        <div class="budget-bar">
+                                            <div class="budget-fill food-fill" style="width: ${22 + budget * 1.5}%"></div>
+                                        </div>
+                                    </div>
+                                                                        </div>
+                                    <div class="budget-category">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Transport</span>
+                                            <span>${Math.round(15 + budget * 1)}%</span>
+                                        </div>
+                                        <div class="budget-bar">
+                                            <div class="budget-fill transport-fill" style="width: ${15 + budget * 1}%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="budget-category">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span>Miscellaneous</span>
+                                            <span>${Math.round(5 + budget * 0.5)}%</span>
+                                        </div>
+                                        <div class="budget-bar">
+                                            <div class="budget-fill misc-fill" style="width: ${5 + budget * 0.5}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <h6>Weather Forecast</h6>
+                                    <div class="weather-days">
+                                        ${weatherHTML}
+                                    </div>
+                                </div>
+                                <div class="map-container mt-4">
+                                    <div class="map-placeholder">Interactive Map of ${destination}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+            resultsSection.innerHTML = resultsHTML;
+            resultsSection.style.display = 'block';
+
+            // Customize plan functionality
+            document.getElementById('customize-plan').addEventListener('click', () => {
+                resultsSection.style.display = 'none';
+                formSection.style.display = 'block';
+                formSection.scrollIntoView({ behavior: 'smooth' });
+                showToast('info', 'Customize Itinerary', 'Adjust your preferences to tailor your trip further.');
+            });
+
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            showToast('success', 'Itinerary Generated', 'Your personalized travel plan is ready! Check out the details below.');
+        }
+
+        // Accessibility: Ensure focus management for screen readers
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && chatWidget.style.display === 'flex') {
+                chatClose.click();
+            }
+        });
+
+        // Initialize form validation
+        tripPlannerForm.classList.add('needs-validation');
+    </script>
+</body>
+</html>
